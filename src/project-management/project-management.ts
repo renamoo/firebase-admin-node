@@ -58,8 +58,8 @@ export class ProjectManagement implements ProjectManagementInterface {
    *
    * @return The list of Android apps.
    */
-  public listAndroidApps(): Promise<AndroidApp[]> {
-    return this.listPlatformApps<AndroidApp>('android', 'listAndroidApps()');
+  public listAndroidApps(pageToken?:string): Promise<{apps: AndroidApp[], nextPageToken?:string}> {
+    return this.listPlatformApps<AndroidApp>('android', 'listAndroidApps()', pageToken);
   }
 
   /**
@@ -67,8 +67,8 @@ export class ProjectManagement implements ProjectManagementInterface {
    *
    * @return The list of iOS apps.
    */
-  public listIosApps(): Promise<IosApp[]> {
-    return this.listPlatformApps<IosApp>('ios', 'listIosApps()');
+  public listIosApps(pageToken?:string): Promise<{apps: IosApp[], nextPageToken?:string}> {
+    return this.listPlatformApps<IosApp>('ios', 'listIosApps()', pageToken);
   }
 
   /**
@@ -261,21 +261,21 @@ export class ProjectManagement implements ProjectManagementInterface {
   /**
    * Lists up to 100 Firebase apps for a specified platform, associated with this Firebase project.
    */
-  private listPlatformApps<T>(platform: 'android' | 'ios', callerName: string): Promise<T[]> {
+  private listPlatformApps<T>(platform: 'android' | 'ios', callerName: string, pageToken?: string): Promise<{apps: T[], nextPageToken?:string}> {
     return this.getResourceName()
       .then((resourceName) => {
         return (platform === 'android') ?
-          this.requestHandler.listAndroidApps(resourceName)
-          : this.requestHandler.listIosApps(resourceName);
+          this.requestHandler.listAndroidApps(resourceName, pageToken)
+          : this.requestHandler.listIosApps(resourceName, pageToken);
       })
       .then((responseData: any) => {
         this.assertListAppsResponseData(responseData, callerName);
 
         if (!responseData.apps) {
-          return [];
+          return {apps: []};
         }
 
-        return responseData.apps.map((appJson: any) => {
+        const apps = responseData.apps.map((appJson: any) => {
           assertServerResponse(
             validator.isNonEmptyString(appJson.appId),
             responseData,
@@ -286,6 +286,17 @@ export class ProjectManagement implements ProjectManagementInterface {
             return new IosApp(appJson.appId, this.requestHandler);
           }
         });
+
+        // not include next page token if not provided.
+        if (typeof responseData.nextPageToken === 'undefined'){
+          return {
+            apps: apps
+          }
+        }
+
+        return {
+          apps: apps, nextPageToken: responseData.nextPageToken
+        }
       });
   }
 

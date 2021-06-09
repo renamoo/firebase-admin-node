@@ -958,9 +958,9 @@ export namespace projectManagement {
         createAndroidApp(packageName: string, displayName?: string): Promise<AndroidApp>;
         createIosApp(bundleId: string, displayName?: string): Promise<IosApp>;
         iosApp(appId: string): IosApp;
-        listAndroidApps(): Promise<AndroidApp[]>;
+        listAndroidApps(): Promise<{apps: AndroidApp[], nextPageToken?:string}>;
         listAppMetadata(): Promise<AppMetadata[]>;
-        listIosApps(): Promise<IosApp[]>;
+        listIosApps(): Promise<{apps: IosApp[], nextPageToken?:string}>;
         setDisplayName(newDisplayName: string): Promise<void>;
         shaCertificate(shaHash: string): ShaCertificate;
     }

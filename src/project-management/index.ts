@@ -324,14 +324,14 @@ export namespace projectManagement {
      *
      * @return The list of Android apps.
      */
-    listAndroidApps(): Promise<AndroidApp[]>;
+    listAndroidApps(): Promise<{apps: AndroidApp[], nextPageToken? :string}>;
 
     /**
      * Lists up to 100 Firebase iOS apps associated with this Firebase project.
      *
      * @return The list of iOS apps.
      */
-    listIosApps(): Promise<IosApp[]>;
+    listIosApps(): Promise<{apps: IosApp[], nextPageToken? :string}>;
 
     /**
      * Creates an `AndroidApp` object, referencing the specified Android app within

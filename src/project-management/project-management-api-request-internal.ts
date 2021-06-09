@@ -123,10 +123,12 @@ export class ProjectManagementRequestHandler {
    * @param {string} parentResourceName Fully-qualified resource name of the project whose Android
    *     apps you want to list.
    */
-  public listAndroidApps(parentResourceName: string): Promise<object> {
+  public listAndroidApps(parentResourceName: string, pageToken?:string): Promise<object> {
+    const baseRequestPath = `${parentResourceName}/iosApps?page_size=${LIST_APPS_MAX_PAGE_SIZE}`;
+    const requestPath = typeof pageToken === 'undefined' ? baseRequestPath : baseRequestPath + `?page_token=${pageToken}`;
     return this.invokeRequestHandler(
       'GET',
-      `${parentResourceName}/androidApps?page_size=${LIST_APPS_MAX_PAGE_SIZE}`,
+      requestPath,
       /* requestData */ null,
       'v1beta1');
   }
@@ -135,10 +137,12 @@ export class ProjectManagementRequestHandler {
    * @param {string} parentResourceName Fully-qualified resource name of the project whose iOS apps
    *     you want to list.
    */
-  public listIosApps(parentResourceName: string): Promise<object> {
+  public listIosApps(parentResourceName: string, pageToken?:string): Promise<object> {
+    const baseRequestPath = `${parentResourceName}/iosApps?page_size=${LIST_APPS_MAX_PAGE_SIZE}`;
+    const requestPath = typeof pageToken === 'undefined' ? baseRequestPath : baseRequestPath + `?page_token=${pageToken}`;
     return this.invokeRequestHandler(
       'GET',
-      `${parentResourceName}/iosApps?page_size=${LIST_APPS_MAX_PAGE_SIZE}`,
+      requestPath,
       /* requestData */ null,
       'v1beta1');
   }
